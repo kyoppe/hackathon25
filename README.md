@@ -1,61 +1,54 @@
-# Slack +g Bot
+# Hackathon25 Lambda Function
 
-SlackのEvent APIを使用して、`@user +g`のようなメッセージを検出し、ログに記録するFlaskアプリケーションです。
-
-## セットアップ
-
-1. Python 3.9以上をインストール
-2. 仮想環境を作成して有効化:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linuxの場合
-   # または
-   .\venv\Scripts\activate  # Windowsの場合
-   ```
-3. 依存パッケージをインストール:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. `.env`ファイルを作成:
-   ```
-   FLASK_APP=app.py
-   FLASK_ENV=development
-   SLACK_SIGNING_SECRET=your_signing_secret_here
-   ```
-
-## 実行方法
-
-1. 仮想環境を有効化:
-   ```bash
-   source venv/bin/activate
-   ```
-2. アプリケーションを起動:
-   ```bash
-   python app.py
-   ```
-
-## ローカルテスト
-
-1. ngrokをインストール
-2. 別のターミナルでngrokを起動:
-   ```bash
-   ngrok http 5000
-   ```
-3. ngrokのURLをSlackアプリのEvent Subscriptionsに設定
-
-## デプロイ
-
-1. コードをGitリポジトリにプッシュ
-2. EC2インスタンスで:
-   ```bash
-   git pull
-   source venv/bin/activate
-   python app.py
-   ```
+Slackのメッセージからプラスポイントを抽出し、Datadogにメトリクスとして送信するAWS Lambda関数です。
 
 ## 機能
 
-- `/slack/events`エンドポイントでSlackイベントを受け取る
-- `app_mention`と`message.channels`イベントを処理
-- `<@ユーザーID> +g`パターンを検出
-- 投稿者と加点された相手をログに出力 
+- Slackのメッセージから`<@ユーザーID> +数字`の形式を検出
+- プラスポイントをDatadogにメトリクスとして送信
+- 送信者、受信者、チャンネル情報をタグとして付与
+
+## 環境変数の設定
+
+このプロジェクトでは、機密情報（トークン類）を環境変数として管理しています。
+
+### Lambda環境変数の設定
+
+AWS Lambdaの環境変数として以下を設定してください：
+
+```env
+# Slack Configuration
+SLACK_BOT_TOKEN=your_slack_bot_token_here
+
+# Datadog Configuration
+DD_API_KEY=your_datadog_api_key_here
+DD_SITE=datadoghq.com
+
+# Application Configuration
+MAX_PLUS_POINTS=10
+```
+
+### 環境変数の説明
+
+- `SLACK_BOT_TOKEN`: Slack Bot Token（Slack APIとの通信に使用）
+- `DD_API_KEY`: Datadog API Key（メトリクス送信に使用）
+- `DD_SITE`: Datadogのサイト（デフォルト: datadoghq.com）
+- `MAX_PLUS_POINTS`: 最大プラスポイント数（デフォルト: 10）
+
+## デプロイ
+
+1. 依存関係をインストール:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Lambda関数にデプロイ:
+   ```bash
+   # deployment.zipを作成してLambdaにアップロード
+   ```
+
+## 注意事項
+
+- トークン類は機密情報のため、適切に管理してください
+- Lambda環境変数として設定することで、コードにハードコードされることを防げます
+- 最大プラスポイント数（`MAX_PLUS_POINTS`）を超える値は自動的に調整されます 

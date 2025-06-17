@@ -39,3 +39,5 @@ env/
 # Logs
 *.log
 logs/ 
+package/
+deployment.zip
