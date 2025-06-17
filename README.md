@@ -1,4 +1,4 @@
-# Hackathon25 Lambda Function
+# Hackathon'25 H1 RecogniDog Lambda Function
 
 Slackのメッセージからプラスポイントを抽出し、Datadogにメトリクスとして送信するAWS Lambda関数です。
 
